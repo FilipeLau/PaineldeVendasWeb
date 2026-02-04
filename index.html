@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recreio Motos - Painel Conectado</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --dark: #1d3557;
+            --light: #f1faee;
+            --accent: #457b9d;
+            --gold: #ffb703;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* --- TELA DE SELEÇÃO INICIAL --- */
+        #role-selector {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95); z-index: 1000;
+            display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap;
+        }
+        .role-btn {
+            padding: 2rem; background: var(--card-bg); border: 2px solid var(--accent);
+            color: white; font-size: 1.5rem; cursor: pointer; border-radius: 10px;
+            transition: transform 0.2s, background 0.2s; min-width: 250px;
+        }
+        .role-btn:hover { transform: scale(1.05); background: var(--accent); }
+
+        /* --- LAYOUT GERAL --- */
+        header {
+            background-color: var(--dark); padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 4px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 1.8rem; letter-spacing: 1px; }
+        h1 span { color: var(--primary); font-weight: 800; }
+
+        main { padding: 2rem; flex: 1; width: 100%; max-width: 1600px; margin: 0 auto; }
+
+        /* --- LOGIN --- */
+        #login-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 900;
+        }
+        .login-box {
+            background: var(--light); color: var(--dark); padding: 2rem;
+            border-radius: 8px; width: 350px; text-align: center;
+        }
+        .login-box input {
+            width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;
+        }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-danger { background: #d00000; color: white; }
+        .btn-success { background: #2a9d8f; color: white; }
+
+        /* --- DASHBOARD (CARDS) --- */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem; margin-top: 1rem;
+        }
+
+        .card {
+            background: var(--card-bg); border-radius: 12px; padding: 1.5rem;
+            position: relative; overflow: hidden; transition: all 0.3s ease;
+            border: 1px solid #334155; display: flex; flex-direction: column;
+        }
+
+        .card h2 { font-size: 1.8rem; margin-bottom: 1rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem; }
+        
+        .stats-row { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+        .stat-item { text-align: center; flex: 1; }
+        .stat-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; }
+        .stat-value { font-size: 2rem; font-weight: bold; }
+        .stat-value.motos { color: var(--primary); }
+        .stat-value.consorcio { color: var(--accent); }
+        
+        .total-badge {
+            background: #334155; padding: 0.5rem; border-radius: 6px;
+            text-align: center; font-weight: bold; margin-top: auto;
+        }
+        .last-update { font-size: 0.75rem; color: #64748b; text-align: center; margin-top: 0.5rem; }
+
+        /* --- ADMIN PANEL --- */
+        .admin-controls {
+            background: var(--card-bg); padding: 1rem; border-radius: 8px; margin-bottom: 2rem;
+            display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; border: 1px solid #334155;
+        }
+        .admin-card-actions { display: flex; gap: 5px; justify-content: center; margin-top: 10px; }
+        .btn-small { padding: 5px 10px; font-size: 0.8rem; }
+        
+        /* --- RANKING DESTAQUES --- */
+        .rank-1 { border: 2px solid var(--gold); box-shadow: 0 0 15px rgba(255, 183, 3, 0.3); transform: translateY(-5px); }
+        .rank-1::after { content: '👑 1º Lugar'; position: absolute; top: 0; right: 0; background: var(--gold); color: black; padding: 2px 8px; font-size: 0.8rem; font-weight: bold; border-bottom-left-radius: 8px; }
+        .rank-2 { border: 2px solid var(--silver); }
+        .rank-2::after { content: '🥈 2º Lugar'; position: absolute; top: 0; right: 0; background: var(--silver); color: black; padding: 2px 8px; font-size: 0.8rem; font-weight: bold; border-bottom-left-radius: 8px; }
+        .rank-3 { border: 2px solid var(--bronze); }
+        .rank-3::after { content: '🥉 3º Lugar'; position: absolute; top: 0; right: 0; background: var(--bronze); color: black; padding: 2px 8px; font-size: 0.8rem; font-weight: bold; border-bottom-left-radius: 8px; }
+
+        /* --- ANIMAÇÕES --- */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #fff; text-shadow: 0 0 10px var(--primary); }
+            100% { transform: scale(1); }
+        }
+        .updated-anim { animation: pop 0.6s ease-out; }
+        
+        /* Loading Status */
+        #status-bar { position: fixed; bottom: 10px; right: 10px; font-size: 0.8rem; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <div id="role-selector">
+        <button class="role-btn" id="btn-admin">🔐 Área Administrativa</button>
+        <button class="role-btn" id="btn-tv">📺 Painel de Vendas (TV)</button>
+    </div>
+
+    <header>
+        <h1>RECREIO <span>MOTOS</span></h1>
+        <div id="clock" style="font-size: 1.2rem; font-weight: bold;">00:00</div>
+    </header>
+
+    <main>
+        <div id="admin-panel" style="display: none;">
+            <div class="admin-controls">
+                <h3>Gerenciar</h3>
+                <input type="text" id="new-seller-name" placeholder="Nome do Vendedor" style="padding: 8px;">
+                <button class="btn btn-success" id="btn-add-seller">+ Adicionar</button>
+                <button class="btn btn-danger" id="btn-reset-all" style="margin-left: auto;">⚠️ Zerar Tudo</button>
+                <button class="btn" id="btn-logout">Sair</button>
+            </div>
+            <div id="admin-grid" class="dashboard-grid"></div>
+        </div>
+
+        <div id="public-panel" style="display: none;">
+            <div id="public-grid" class="dashboard-grid"></div>
+        </div>
+    </main>
+
+    <div id="login-modal">
+        <div class="login-box">
+            <h2>Acesso Restrito</h2>
+            <form id="login-form">
+                <input type="email" id="email" placeholder="Email" required value="admin@recreiomotos.com">
+                <input type="password" id="password" placeholder="Senha" required>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="status-bar">Conectando ao banco de dados...</div>
+
+    <script type="module">
+        // Importa Firebase direto do CDN (não precisa de npm)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // --- CONFIGURAÇÃO DO FIREBASE (SUBSTITUA AQUI) ---
+        // Pegue isso no Console do Firebase > Configurações do Projeto > Geral
+        const firebaseConfig = {
+            apiKey: "AIzaSyD...", 
+            authDomain: "seu-projeto.firebaseapp.com",
+            databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
+            projectId: "seu-projeto",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123...",
+            appId: "1:123..."
+        };
+
+        // Inicializa Firebase
+        const firebaseApp = initializeApp(firebaseConfig);
+        const db = getDatabase(firebaseApp);
+        const dbRef = ref(db, 'sales_data'); // 'Pasta' onde os dados ficam no banco
+
+        // Variável de estado local para comparação
+        let localData = [];
+
+        // --- LÓGICA DO APP ---
+        const app = {
+            init(role) {
+                document.getElementById('role-selector').style.display = 'none';
+                
+                // Relógio
+                setInterval(() => {
+                    document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR');
+                }, 1000);
+
+                if (role === 'admin') {
+                    document.getElementById('login-modal').style.display = 'flex';
+                } else {
+                    document.getElementById('public-panel').style.display = 'block';
+                    this.listenToData('public');
+                }
+            },
+
+            listenToData(mode) {
+                // ESCUTA O BANCO EM TEMPO REAL
+                document.getElementById('status-bar').innerText = "🟢 Conectado e Sincronizando";
+                
+                onValue(dbRef, (snapshot) => {
+                    const dataObj = snapshot.val();
+                    // Converte objeto do Firebase para Array
+                    const dataArray = dataObj ? Object.keys(dataObj).map(key => ({...dataObj[key], firebaseKey: key})) : [];
+                    
+                    if (mode === 'public') {
+                        this.animateChanges(localData, dataArray);
+                        localData = dataArray;
+                        this.renderPublic(dataArray);
+                    } else {
+                        localData = dataArray;
+                        this.renderAdmin(dataArray);
+                    }
+                });
+            },
+
+            // --- AÇÕES DO ADMIN (Salvam no Firebase) ---
+            addSeller() {
+                const name = document.getElementById('new-seller-name').value;
+                if (!name.trim()) return;
+
+                const newSeller = {
+                    id: Date.now(), // ID numérico antigo mantido
+                    name: name,
+                    motos: 0,
+                    consorcios: 0,
+                    lastSale: null,
+                    total: 0
+                };
+                
+                // Salva no Firebase (push cria um ID único)
+                push(dbRef, newSeller);
+                document.getElementById('new-seller-name').value = '';
+            },
+
+            updateSale(firebaseKey, type, amount) {
+                const seller = localData.find(s => s.firebaseKey === firebaseKey);
+                if (!seller) return;
+                
+                // Evita negativos
+                if (amount < 0 && seller[type] <= 0) return;
+
+                const updates = {
+                    [type]: seller[type] + amount,
+                    total: (seller.motos || 0) + (seller.consorcios || 0) + amount,
+                    lastSale: amount > 0 ? new Date().toISOString() : seller.lastSale
+                };
+
+                // Atualiza apenas os campos necessários
+                set(ref(db, `sales_data/${firebaseKey}`), { ...seller, ...updates });
+            },
+
+            removeSeller(firebaseKey) {
+                if(confirm('Remover vendedor?')) {
+                    remove(ref(db, `sales_data/${firebaseKey}`));
+                }
+            },
+
+            resetAll() {
+                if(confirm('Zerar TODOS os números?')) {
+                    // Atualiza todos um por um
+                    localData.forEach(seller => {
+                        set(ref(db, `sales_data/${seller.firebaseKey}`), {
+                            ...seller, motos: 0, consorcios: 0, total: 0, lastSale: null
+                        });
+                    });
+                }
+            },
+
+            // --- RENDERIZAÇÃO ---
+            renderAdmin(data) {
+                const container = document.getElementById('admin-grid');
+                container.innerHTML = '';
+                data.forEach(seller => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <h2>${seller.name}</h2>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-label">Motos</div>
+                                <div class="stat-value motos">${seller.motos}</div>
+                                <div class="admin-card-actions">
+                                    <button class="btn-up-moto btn btn-small btn-primary" data-key="${seller.firebaseKey}">+</button>
+                                    <button class="btn-down-moto btn btn-small btn-danger" data-key="${seller.firebaseKey}">-</button>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Consórcio</div>
+                                <div class="stat-value consorcio">${seller.consorcios}</div>
+                                <div class="admin-card-actions">
+                                    <button class="btn-up-cons btn btn-small btn-primary" data-key="${seller.firebaseKey}">+</button>
+                                    <button class="btn-down-cons btn btn-small btn-danger" data-key="${seller.firebaseKey}">-</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-remove btn btn-small btn-danger" data-key="${seller.firebaseKey}" style="margin-top:auto">Remover</button>
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Attach Events (devido ao module scope)
+                document.querySelectorAll('.btn-up-moto').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'motos', 1));
+                document.querySelectorAll('.btn-down-moto').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'motos', -1));
+                document.querySelectorAll('.btn-up-cons').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'consorcios', 1));
+                document.querySelectorAll('.btn-down-cons').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'consorcios', -1));
+                document.querySelectorAll('.btn-remove').forEach(b => b.onclick = () => this.removeSeller(b.dataset.key));
+            },
+
+            renderPublic(data) {
+                const container = document.getElementById('public-grid');
+                container.innerHTML = '';
+                
+                const sorted = [...data].sort((a, b) => b.total - a.total);
+
+                sorted.forEach((seller, index) => {
+                    let rankClass = '';
+                    if (seller.total > 0) {
+                        if (index === 0) rankClass = 'rank-1';
+                        else if (index === 1) rankClass = 'rank-2';
+                        else if (index === 2) rankClass = 'rank-3';
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = `card ${rankClass}`;
+                    card.innerHTML = `
+                        <h2>${seller.name}</h2>
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-label">Motos</div>
+                                <div class="stat-value motos" id="motos-${seller.id}">${seller.motos}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Consórcios</div>
+                                <div class="stat-value consorcio" id="consorcios-${seller.id}">${seller.consorcios}</div>
+                            </div>
+                        </div>
+                        <div class="total-badge">Total de Negócios: ${seller.total}</div>
+                        <div class="last-update">Última venda: ${this.formatDate(seller.lastSale)}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            animateChanges(oldData, newData) {
+                newData.forEach(newItem => {
+                    const oldItem = oldData.find(i => i.id === newItem.id);
+                    if (oldItem) {
+                        if (newItem.motos > oldItem.motos) this.triggerAnim(`motos-${newItem.id}`);
+                        if (newItem.consorcios > oldItem.consorcios) this.triggerAnim(`consorcios-${newItem.id}`);
+                    }
+                });
+            },
+
+            triggerAnim(elementId) {
+                setTimeout(() => {
+                    const el = document.getElementById(elementId);
+                    if (el) {
+                        el.classList.remove('updated-anim');
+                        void el.offsetWidth;
+                        el.classList.add('updated-anim');
+                    }
+                }, 100);
+            },
+
+            formatDate(isoString) {
+                if (!isoString) return 'Sem vendas';
+                const date = new Date(isoString);
+                return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            }
+        };
+
+        // --- EVENT LISTENERS GLOBAIS ---
+        document.getElementById('btn-admin').addEventListener('click', () => app.init('admin'));
+        document.getElementById('btn-tv').addEventListener('click', () => app.init('public'));
+        
+        document.getElementById('btn-add-seller').addEventListener('click', () => app.addSeller());
+        document.getElementById('btn-reset-all').addEventListener('click', () => app.resetAll());
+        document.getElementById('btn-logout').addEventListener('click', () => location.reload());
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            if (email === 'admin@recreiomotos.com' && pass === '123456') {
+                document.getElementById('login-modal').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+                app.listenToData('admin');
+            } else {
+                alert('Acesso negado');
+            }
+        });
+
+    </script>
+</body>
+</html>
