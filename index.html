@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recreio Motos - Painel Conectado</title>
+    <title>Recreio Motos - Painel Compacto</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary-grad: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            --cons-grad: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
             --bg-grad: linear-gradient(135deg, #ffffff 0%, #f8f9fa 30%, #fff5f5 70%, #ffffff 100%);
             --text-main: #1f2937;
             --text-light: #6b7280;
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.9);
             --gold: #f59e0b;
             --silver: #94a3b8;
             --bronze: #b45309;
@@ -40,74 +41,89 @@
             pointer-events: none; z-index: -1;
         }
 
-        .floating-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
-        .shape {
-            position: absolute; border-radius: 50%; background: rgba(220, 38, 38, 0.06);
-            animation: float 8s ease-in-out infinite;
-        }
-        .shape:nth-child(1) { width: 300px; height: 300px; top: -50px; left: -50px; }
-        .shape:nth-child(2) { width: 400px; height: 400px; bottom: 10%; right: -100px; animation-delay: 2s; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-30px) rotate(120deg); }
-            66% { transform: translateY(30px) rotate(240deg); }
-        }
-
         /* --- TELA DE SELEÇÃO INICIAL --- */
         #role-selector {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.9); 
+            background: rgba(255, 255, 255, 0.95); 
             backdrop-filter: blur(15px);
             z-index: 1000;
             display: flex; justify-content: center; align-items: center; gap: 2rem; flex-wrap: wrap;
         }
         
         .role-btn {
-            padding: 2.5rem; 
-            background: var(--card-bg); 
+            padding: 2rem; 
+            background: white; 
             border: 1px solid rgba(220, 38, 38, 0.15);
             color: var(--text-main); 
-            font-size: 1.5rem; 
+            font-size: 1.3rem; 
             font-weight: 700;
             cursor: pointer; 
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
             transition: all 0.3s ease; 
-            min-width: 300px;
+            min-width: 280px;
         }
         .role-btn:hover { 
-            transform: translateY(-10px); 
-            background: white;
+            transform: translateY(-5px); 
             border-color: #dc2626;
-            box-shadow: 0 30px 60px rgba(220, 38, 38, 0.15);
             color: #dc2626;
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.1);
         }
 
         /* --- HEADER --- */
         header {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
-            padding: 1rem 3rem;
+            padding: 0.5rem 2rem;
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid rgba(220, 38, 38, 0.1); 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             position: sticky; top: 0; z-index: 100;
+            min-height: 80px;
         }
 
-        .header-logos { display: flex; align-items: center; gap: 40px; }
-        .logo-honda { height: 70px; width: auto; object-fit: contain; }
-        .logo-recreio { height: 70px; width: auto; object-fit: contain; border-left: 3px solid rgba(220, 38, 38, 0.2); padding-left: 40px; }
+        .header-logos { display: flex; align-items: center; gap: 20px; }
+        .logo-honda { height: 40px; width: auto; object-fit: contain; }
+        .logo-recreio { height: 40px; width: auto; object-fit: contain; border-left: 2px solid rgba(220, 38, 38, 0.2); padding-left: 20px; }
+
+        .team-goals-container {
+            flex: 1; max-width: 800px; margin: 0 30px;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+
+        .goal-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+        
+        .goal-info { 
+            width: 120px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; 
+            display: flex; justify-content: space-between;
+        }
+        .text-moto { color: #dc2626; }
+        .text-cons { color: #0284c7; }
+
+        .team-progress-bg {
+            flex: 1; background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; position: relative;
+        }
+        
+        .fill-moto {
+            background: var(--primary-grad);
+            height: 100%; width: 0%; transition: width 1s ease-out;
+        }
+        .fill-cons {
+            background: var(--cons-grad);
+            height: 100%; width: 0%; transition: width 1s ease-out;
+        }
 
         #clock {
-            font-size: 1.8rem;
+            font-size: 1rem;
             font-weight: 800;
-            background: var(--primary-grad);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #374151;
             font-variant-numeric: tabular-nums;
+            text-align: right;
+            line-height: 1.2;
+            min-width: 130px;
         }
 
-        main { padding: 1.5rem; flex: 1; width: 100%; max-width: 1800px; margin: 0 auto; z-index: 1; }
+        main { padding: 1rem; flex: 1; width: 100%; max-width: 1800px; margin: 0 auto; z-index: 1; padding-bottom: 50px; }
 
         /* --- LOGIN --- */
         #login-modal {
@@ -116,57 +132,51 @@
             display: none; justify-content: center; align-items: center; z-index: 900;
         }
         .login-box {
-            background: white; color: var(--text-main); padding: 3rem;
-            border-radius: 24px; width: 400px; text-align: center;
+            background: white; color: var(--text-main); padding: 2.5rem;
+            border-radius: 20px; width: 380px; text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(220, 38, 38, 0.1);
         }
-        .login-box h2 { margin-bottom: 1.5rem; color: #dc2626; font-weight: 800; }
         
         input {
-            width: 100%; padding: 15px; margin: 10px 0; 
-            border: 1px solid rgba(220, 38, 38, 0.2); border-radius: 12px;
-            background: #fdf2f2; font-family: 'Inter'; outline: none; transition: all 0.3s;
+            width: 100%; padding: 10px; margin: 5px 0 15px 0; 
+            border: 1px solid rgba(220, 38, 38, 0.2); border-radius: 8px;
+            background: #fdf2f2; font-family: 'Inter'; outline: none;
         }
-        input:focus { border-color: #dc2626; background: white; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
 
         /* --- BOTÕES --- */
         .btn { 
-            padding: 10px 20px; border: none; border-radius: 10px; 
-            cursor: pointer; font-weight: 700; font-family: 'Inter';
-            transition: all 0.3s ease; 
+            padding: 8px 16px; border: none; border-radius: 8px; 
+            cursor: pointer; font-weight: 700; font-family: 'Inter'; font-size: 0.9rem;
+            transition: all 0.2s ease; 
         }
         .btn:hover { transform: translateY(-2px); }
-
         .btn-primary { background: var(--primary-grad); color: white; }
         .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: white; }
         .btn-success { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; }
 
-        /* --- DASHBOARD GRID --- */
+        /* --- DASHBOARD GRID COMPACTO --- */
         .dashboard-grid {
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
-            gap: 1.2rem; 
-            margin-top: 1rem;
+            /* Mudança chave: cards menores (200px) para caber mais */
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 0.8rem; 
+            margin-top: 0.5rem;
             position: relative;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.7); 
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border-radius: 16px; 
-            padding: 1.2rem; 
+            border-radius: 12px; 
+            padding: 0.8rem; 
             position: relative; overflow: hidden; 
-            /* Importante para a animação FLIP funcionar bem */
             transform-origin: center center;
             border: 1px solid rgba(255, 255, 255, 0.8); 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.04);
-            display: flex; flex-direction: column;
-            /* Will-change ajuda na performance da animação */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            display: flex; flex-direction: column; align-items: center;
             will-change: transform;
         }
 
-        /* Classe usada durante o movimento de troca de posição */
         .card.is-moving {
             transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
             z-index: 5;
@@ -174,90 +184,99 @@
         }
         
         .card h2 { 
-            font-size: 1.15rem; margin-bottom: 1rem; 
-            border-bottom: 2px solid rgba(220, 38, 38, 0.1); 
-            padding-bottom: 0.5rem; color: #111827; 
-            font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            font-size: 1rem; margin-bottom: 8px; margin-top: 15px; /* Espaço para a badge */
+            color: #111827; font-weight: 800; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            width: 100%; text-align: center;
         }
+
+        .ind-progress-container { width: 100%; margin-bottom: 8px; }
+        .ind-progress-bg { background: #f3f4f6; height: 5px; border-radius: 3px; overflow: hidden; margin-top: 3px; }
+        .ind-progress-fill { background: #10b981; height: 100%; width: 0%; transition: width 0.5s ease; }
+        .ind-progress-label { font-size: 0.6rem; color: #6b7280; display: flex; justify-content: space-between; }
         
-        .stats-row { display: flex; justify-content: space-between; margin-bottom: 1rem; gap: 8px; }
-        .stat-item { text-align: center; flex: 1; background: rgba(255,255,255,0.5); padding: 8px; border-radius: 10px; }
+        .stats-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; gap: 6px; width: 100%; }
+        .stat-item { text-align: center; flex: 1; background: rgba(255,255,255,0.6); padding: 5px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.02); }
         
-        .stat-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 3px; }
-        .stat-value { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+        .stat-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+        .stat-value { font-size: 1.4rem; font-weight: 800; line-height: 1; }
         .stat-value.motos { color: #dc2626; }
         .stat-value.consorcio { color: #0284c7; }
         
         .total-badge {
             background: linear-gradient(135deg, #1f2937 0%, #000000 100%); 
-            color: white; padding: 0.6rem; border-radius: 10px;
-            text-align: center; font-size: 0.9rem; font-weight: 700; margin-top: auto;
+            color: white; padding: 0.4rem; border-radius: 6px;
+            text-align: center; font-size: 0.8rem; font-weight: 700; margin-top: auto; width: 100%;
         }
-        .last-update { font-size: 0.7rem; color: #9ca3af; text-align: center; margin-top: 0.8rem; font-style: italic; }
+        .last-update { font-size: 0.6rem; color: #9ca3af; text-align: center; margin-top: 0.5rem; font-style: italic; }
 
-        /* --- RANKING DESTAQUES --- */
-        /* Usamos classes separadas para o estilo visual, pois a posição no DOM muda */
-        .badge-icon {
-            position: absolute; top: 0; right: 0; padding: 3px 10px; 
-            font-size: 0.7rem; border-bottom-left-radius: 10px; font-weight: bold; color: white;
-            display: none; /* Escondido por padrão */
+        /* --- TICKER --- */
+        .ticker-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 35px;
+            background: #111827; color: white; z-index: 500;
+            display: flex; align-items: center; overflow: hidden;
+            border-top: 3px solid #dc2626;
         }
-        
+        .ticker-wrapper { display: flex; animation: ticker-scroll 30s linear infinite; white-space: nowrap; }
+        .ticker-item { padding: 0 30px; font-size: 0.85rem; font-weight: 500; display: inline-block; }
+        .ticker-item b { color: #fca5a5; }
+
+        @keyframes ticker-scroll {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* --- RANKING --- */
+        .badge-icon {
+            position: absolute; top: 0; right: 0; padding: 2px 8px; 
+            font-size: 0.65rem; border-bottom-left-radius: 8px; font-weight: bold; color: white;
+            display: none; 
+        }
         .card.rank-1 { border: 2px solid var(--gold); background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.95), rgba(255, 247, 230, 0.95)); }
         .card.rank-1 .badge-icon { display: block; background: var(--gold); content: '👑 1º'; }
         .card.rank-1 .badge-icon::after { content: '👑 1º'; }
-
         .card.rank-2 .badge-icon { display: block; background: var(--silver); }
         .card.rank-2 .badge-icon::after { content: '🥈 2º'; }
-
         .card.rank-3 .badge-icon { display: block; background: var(--bronze); }
         .card.rank-3 .badge-icon::after { content: '🥉 3º'; }
 
-        /* --- ANIMAÇÃO DE POP (DESTAQUE) --- */
+        /* --- ANIMAÇÕES --- */
         @keyframes highlight-pop {
             0% { transform: scale(1); z-index: 20; }
-            40% { transform: scale(1.15) translateY(-10px); z-index: 20; box-shadow: 0 30px 60px rgba(220, 38, 38, 0.3); border-color: #dc2626; }
-            60% { transform: scale(1.15) translateY(-10px); z-index: 20; box-shadow: 0 30px 60px rgba(220, 38, 38, 0.3); border-color: #dc2626; }
+            50% { transform: scale(1.1) translateY(-5px); z-index: 20; box-shadow: 0 20px 40px rgba(220, 38, 38, 0.2); border-color: #dc2626; }
             100% { transform: scale(1); z-index: 1; }
         }
-
-        .card-highlight {
-            /* Duração total do destaque antes de permitir reordenar */
-            animation: highlight-pop 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .updated-anim {
-            animation: pulse-text 0.5s ease;
-        }
-
+        .card-highlight { animation: highlight-pop 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        
+        .updated-anim { animation: pulse-text 0.5s ease; }
         @keyframes pulse-text {
             0% { transform: scale(1); color: #dc2626; }
-            50% { transform: scale(1.5); color: #ef4444; }
+            50% { transform: scale(1.3); color: #ef4444; }
             100% { transform: scale(1); }
         }
 
         /* --- ADMIN PANEL --- */
         .admin-controls {
-            background: white; padding: 1.2rem; border-radius: 14px; margin-bottom: 1.5rem;
+            background: white; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;
             display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; 
             border: 1px solid rgba(220, 38, 38, 0.1);
         }
-        .admin-card-actions { display: flex; gap: 4px; justify-content: center; margin-top: 8px; }
-        .btn-small { padding: 4px 10px; font-size: 0.8rem; border-radius: 6px; }
+        .admin-config-box {
+            background: #fff1f2; padding: 0.8rem; border-radius: 8px; width: 100%; margin-bottom: 0.5rem;
+            border: 1px dashed #dc2626; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.9rem;
+        }
+        .admin-card-actions { display: flex; gap: 4px; justify-content: center; margin-top: 4px; }
+        .btn-small { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; }
+        .admin-input-goal { font-size: 0.8rem; padding: 4px; width: 60px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
 
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 15px; }
-            .logo-recreio { height: 80px; border-left: none; padding-left: 0; border-top: 2px solid #eee; padding-top: 10px; }
-            .logo-honda { height: 50px; }
+            header { flex-direction: column; gap: 10px; padding: 10px; }
+            .logo-recreio { border-left: none; padding-left: 0; }
+            .team-goals-container { margin: 10px 0; width: 100%; }
         }
     </style>
 </head>
 <body>
-
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
 
     <div id="role-selector">
         <button class="role-btn" id="btn-admin">🔐 Área Administrativa</button>
@@ -266,17 +285,48 @@
 
     <header>
         <div class="header-logos">
-            <img src="Honda_Logo.svg.png" alt="Honda" class="logo-honda">
-            <img src="logo-recreio.png" alt="Recreio Motos" class="logo-recreio">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Honda_Logo.svg" alt="Honda" class="logo-honda">
+            <img src="logo-recreio.png" alt="Recreio Motos" class="logo-recreio" onerror="this.style.display='none'">
         </div>
-        <div id="clock">00:00</div>
+
+        <div class="team-goals-container">
+            <div class="goal-row">
+                <div class="goal-info text-moto">
+                    <span>Motos</span>
+                    <span id="team-stats-moto">0 / 0</span>
+                </div>
+                <div class="team-progress-bg">
+                    <div id="team-bar-moto" class="fill-moto"></div>
+                </div>
+            </div>
+            
+            <div class="goal-row">
+                <div class="goal-info text-cons">
+                    <span>Consórcio</span>
+                    <span id="team-stats-cons">0 / 0</span>
+                </div>
+                <div class="team-progress-bg">
+                    <div id="team-bar-cons" class="fill-cons"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="clock">00/00 - 00:00</div>
     </header>
 
     <main>
         <div id="admin-panel" style="display: none;">
             <div class="admin-controls">
-                <h3>Gerenciar Vendedores</h3>
-                <input type="text" id="new-seller-name" placeholder="Nome do Vendedor" style="max-width: 250px;">
+                
+                <div class="admin-config-box">
+                    <strong>🎯 Metas da Loja:</strong>
+                    <label>Motos: <input type="number" id="conf-team-motos" value="50" style="width: 60px; padding: 3px;"></label>
+                    <label>Consórcio: <input type="number" id="conf-team-cons" value="20" style="width: 60px; padding: 3px;"></label>
+                    <button class="btn btn-primary btn-small" id="btn-save-config">Salvar Metas Globais</button>
+                </div>
+
+                <h3>Gerenciar Equipe</h3>
+                <input type="text" id="new-seller-name" placeholder="Nome do Vendedor" style="max-width: 200px; padding: 8px;">
                 <button class="btn btn-success" id="btn-add-seller">+ Adicionar</button>
                 <button class="btn btn-danger" id="btn-reset-all" style="margin-left: auto;">⚠️ Zerar Tudo</button>
                 <button class="btn" id="btn-logout" style="background: #f3f4f6;">Sair</button>
@@ -289,6 +339,12 @@
         </div>
     </main>
 
+    <div class="ticker-bar" id="ticker-bar" style="display: none;">
+        <div class="ticker-wrapper" id="ticker-content">
+            <div class="ticker-item">Painel Recreio Motos Conectado 🚀</div>
+        </div>
+    </div>
+
     <div id="login-modal">
         <div class="login-box">
             <h2>Acesso Restrito</h2>
@@ -300,7 +356,7 @@
         </div>
     </div>
 
-    <div id="status-bar">Conectando...</div>
+    <div id="status-bar" style="position:fixed; bottom:5px; right:5px; font-size:0.7rem; color:#999; z-index:600;">Conectando...</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -320,23 +376,44 @@
         const firebaseApp = initializeApp(firebaseConfig);
         const db = getDatabase(firebaseApp);
         const dbRef = ref(db, 'sales_data');
+        const configRef = ref(db, 'settings');
+
         let localData = [];
-        let isAnimating = false; // Controle para evitar conflitos de animação
+        let config = { teamGoalMotos: 50, teamGoalCons: 20 }; 
 
         const app = {
             init(role) {
                 document.getElementById('role-selector').style.display = 'none';
-                setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('pt-BR'); }, 1000);
+                
+                setInterval(() => { 
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                    const dateString = now.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+                    document.getElementById('clock').innerText = `${dateString} - ${timeString}`;
+                }, 1000);
+
+                onValue(configRef, (snap) => {
+                    if (snap.exists()) {
+                        const val = snap.val();
+                        config.teamGoalMotos = val.teamGoalMotos || val.teamGoal || 50;
+                        config.teamGoalCons = val.teamGoalCons || 20;
+                        document.getElementById('conf-team-motos').value = config.teamGoalMotos;
+                        document.getElementById('conf-team-cons').value = config.teamGoalCons;
+                        if (localData.length > 0) this.updateTeamGoalUI(localData);
+                    }
+                });
+
                 if (role === 'admin') {
                     document.getElementById('login-modal').style.display = 'flex';
                 } else {
                     document.getElementById('public-panel').style.display = 'block';
+                    document.getElementById('ticker-bar').style.display = 'flex';
                     this.listenToData('public');
                 }
             },
 
             listenToData(mode) {
-                document.getElementById('status-bar').innerText = "🟢 Sincronizado";
+                document.getElementById('status-bar').innerText = "🟢 On";
                 onValue(dbRef, (snapshot) => {
                     const dataObj = snapshot.val();
                     const dataArray = dataObj ? Object.keys(dataObj).map(key => ({...dataObj[key], firebaseKey: key})) : [];
@@ -345,67 +422,76 @@
                         this.handlePublicUpdate(localData, dataArray);
                     } else {
                         localData = dataArray;
+                        // CORREÇÃO: Atualiza a barra de metas global também no modo Admin
+                        this.updateTeamGoalUI(dataArray);
                         this.renderAdmin(dataArray);
                     }
                 });
             },
 
-            // Função central que decide se só atualiza números ou se reordena
             handlePublicUpdate(oldData, newData) {
-                // 1. Verificar se é a primeira carga (se sim, renderiza tudo direto)
+                this.updateTeamGoalUI(newData);
+
                 if (oldData.length === 0) {
                     localData = newData;
                     this.initialRender(newData);
                     return;
                 }
 
-                // 2. Detectar mudanças
                 let needsHighlight = false;
                 let highlightId = null;
 
                 newData.forEach(newItem => {
                     const oldItem = oldData.find(i => i.id === newItem.id);
-                    // Se o item já existia e teve aumento de vendas
                     if (oldItem && (newItem.motos > oldItem.motos || newItem.consorcios > oldItem.consorcios)) {
                         needsHighlight = true;
                         highlightId = newItem.id;
+                        this.addTickerMessage(newItem.name, newItem.motos > oldItem.motos ? "Moto" : "Consórcio");
                     }
                 });
                 
-                // 3. Verifica se entraram novos vendedores (que não existiam antes)
                 const newSellers = newData.filter(n => !oldData.find(o => o.id === n.id));
-                if (newSellers.length > 0) {
-                    // Se tem gente nova, adiciona no DOM sem reordenar ainda
-                    this.appendNewCards(newSellers);
-                }
+                if (newSellers.length > 0) this.appendNewCards(newSellers);
 
-                // Atualiza os dados locais
                 localData = newData;
-
-                // 4. Atualiza os NÚMEROS na tela (sem mover nada ainda)
                 this.updateCardValues(newData);
 
                 if (needsHighlight && highlightId) {
-                    // CENÁRIO A: Alguém vendeu. 
-                    // 1. Anima o destaque (Pop)
                     this.triggerHighlight(highlightId);
-                    
-                    // 2. Espera a animação acabar (2s) para reordenar as posições
                     setTimeout(() => {
                         this.reorderGridWithAnimation(newData);
-                    }, 2200); // 2.2s (um pouco mais que a animação CSS de 2s)
-
+                    }, 2200); 
                 } else {
-                    // CENÁRIO B: Ninguém vendeu agora (ou foi remoção/reset).
-                    // Reordena imediatamente com animação suave.
                     this.reorderGridWithAnimation(newData);
                 }
+            },
+
+            updateTeamGoalUI(data) {
+                const totalMotos = data.reduce((acc, curr) => acc + (curr.motos || 0), 0);
+                const totalCons = data.reduce((acc, curr) => acc + (curr.consorcios || 0), 0);
+                
+                const pctMotos = Math.min((totalMotos / config.teamGoalMotos) * 100, 100);
+                document.getElementById('team-stats-moto').innerText = `${totalMotos}/${config.teamGoalMotos}`;
+                document.getElementById('team-bar-moto').style.width = `${pctMotos}%`;
+
+                const pctCons = Math.min((totalCons / config.teamGoalCons) * 100, 100);
+                document.getElementById('team-stats-cons').innerText = `${totalCons}/${config.teamGoalCons}`;
+                document.getElementById('team-bar-cons').style.width = `${pctCons}%`;
+            },
+
+            addTickerMessage(name, type) {
+                const container = document.getElementById('ticker-content');
+                const item = document.createElement('div');
+                item.className = 'ticker-item';
+                const time = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                item.innerHTML = `🔥 ${time} - <b>${name}</b> vendeu ${type}!`;
+                container.prepend(item);
+                if(container.children.length > 8) container.lastChild.remove();
             },
 
             initialRender(data) {
                 const container = document.getElementById('public-grid');
                 container.innerHTML = '';
-                // Ordena
                 const sorted = [...data].sort((a, b) => b.total - a.total);
                 sorted.forEach(seller => {
                     container.appendChild(this.createCardElement(seller));
@@ -425,9 +511,25 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.id = `card-${seller.id}`;
+                
+                const userGoal = seller.individualGoal || 10;
+                const indPct = Math.min((seller.total / userGoal) * 100, 100);
+
+                // CARD COMPACTO: SEM FOTO
                 card.innerHTML = `
                     <div class="badge-icon"></div>
                     <h2>${seller.name}</h2>
+                    
+                    <div class="ind-progress-container">
+                        <div class="ind-progress-label">
+                            <span>Meta: ${userGoal}</span> 
+                            <span>${Math.round(indPct)}%</span>
+                        </div>
+                        <div class="ind-progress-bg">
+                            <div class="ind-progress-fill" id="prog-${seller.id}" style="width: ${indPct}%"></div>
+                        </div>
+                    </div>
+
                     <div class="stats-row">
                         <div class="stat-item">
                             <div class="stat-label">Motos</div>
@@ -448,11 +550,9 @@
                 data.forEach(seller => {
                     const card = document.getElementById(`card-${seller.id}`);
                     if (card) {
-                        // Atualiza textos
                         const elMotos = document.getElementById(`motos-${seller.id}`);
                         const elCons = document.getElementById(`consorcios-${seller.id}`);
-                        
-                        // Verifica se mudou para dar o "pulse" no texto
+
                         if (elMotos.innerText != seller.motos) {
                             elMotos.innerText = seller.motos;
                             this.triggerTextAnim(elMotos);
@@ -462,19 +562,26 @@
                             this.triggerTextAnim(elCons);
                         }
 
+                        const userGoal = seller.individualGoal || 10;
+                        const indPct = Math.min((seller.total / userGoal) * 100, 100);
+                        const elProg = document.getElementById(`prog-${seller.id}`);
+                        if(elProg) {
+                            elProg.style.width = `${indPct}%`;
+                            const labelDiv = elProg.parentElement.previousElementSibling;
+                            if(labelDiv) labelDiv.innerHTML = `<span>Meta: ${userGoal}</span> <span>${Math.round(indPct)}%</span>`;
+                        }
+
                         document.getElementById(`total-${seller.id}`).innerText = `Total: ${seller.total}`;
                         document.getElementById(`date-${seller.id}`).innerText = this.formatDate(seller.lastSale);
                     }
                 });
             },
 
-            // --- LÓGICA DE ANIMAÇÃO DE DESTAQUE ---
             triggerHighlight(id) {
                 const card = document.getElementById(`card-${id}`);
                 if (card) {
-                    // Remove classe se já existir para reiniciar
                     card.classList.remove('card-highlight');
-                    void card.offsetWidth; // Force Reflow
+                    void card.offsetWidth; 
                     card.classList.add('card-highlight');
                 }
             },
@@ -485,61 +592,44 @@
                 el.classList.add('updated-anim');
             },
 
-            // --- LÓGICA DE REORDENAÇÃO SUAVE (FLIP) ---
             reorderGridWithAnimation(data) {
                 const container = document.getElementById('public-grid');
                 const cards = Array.from(container.children);
                 
-                // 1. FIRST: Gravar posição atual (Top/Left) de cada card
                 const positions = new Map();
                 cards.forEach(card => {
                     const rect = card.getBoundingClientRect();
                     positions.set(card.id, { left: rect.left, top: rect.top });
                 });
 
-                // 2. STATE: Ordenar o DOM real
                 const sortedData = [...data].sort((a, b) => b.total - a.total);
-                
-                // Remove destaque antigo antes de mover para evitar bugs visuais
                 cards.forEach(c => c.classList.remove('card-highlight'));
 
-                // Reanexa os elementos na nova ordem
                 sortedData.forEach(seller => {
                     const card = document.getElementById(`card-${seller.id}`);
-                    if (card) {
-                        container.appendChild(card); // appendChild move o elemento existente
-                    }
+                    if (card) container.appendChild(card); 
                 });
 
-                // Atualiza as cores/badges do ranking agora que a ordem mudou
                 this.updateBadges(sortedData);
 
-                // 3. LAST & INVERT: Calcular a diferença e aplicar Transform
                 requestAnimationFrame(() => {
                     cards.forEach(card => {
                         const oldPos = positions.get(card.id);
                         if (!oldPos) return;
-
                         const newRect = card.getBoundingClientRect();
                         const deltaX = oldPos.left - newRect.left;
                         const deltaY = oldPos.top - newRect.top;
-
                         if (deltaX !== 0 || deltaY !== 0) {
-                            // Inverte: coloca visualmente onde estava antes
                             card.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-                            card.style.transition = 'none'; // Sem transição para o setup
+                            card.style.transition = 'none'; 
                         }
                     });
-
-                    // 4. PLAY: Remove o transform e deixa o CSS animar para zero (nova posição)
                     requestAnimationFrame(() => {
                         cards.forEach(card => {
                             card.classList.add('is-moving');
                             card.style.transform = '';
-                            card.style.transition = ''; // Volta pro CSS (class .is-moving)
+                            card.style.transition = ''; 
                         });
-
-                        // Limpa a classe de movimento depois que terminar
                         setTimeout(() => {
                             cards.forEach(c => c.classList.remove('is-moving'));
                         }, 800);
@@ -548,12 +638,9 @@
             },
 
             updateBadges(sortedData) {
-                // Remove classes antigas
                 document.querySelectorAll('.card').forEach(c => {
                     c.classList.remove('rank-1', 'rank-2', 'rank-3');
                 });
-
-                // Adiciona novas baseadas na ordem do array ordenado
                 sortedData.forEach((seller, index) => {
                     if (seller.total > 0) {
                         const card = document.getElementById(`card-${seller.id}`);
@@ -566,11 +653,25 @@
                 });
             },
 
-            // --- ADMIN & UTILS ---
+            saveConfig() {
+                const tMotos = parseInt(document.getElementById('conf-team-motos').value) || 0;
+                const tCons = parseInt(document.getElementById('conf-team-cons').value) || 0;
+                set(configRef, { teamGoalMotos: tMotos, teamGoalCons: tCons });
+                alert('Metas da Loja atualizadas!');
+            },
+
             addSeller() {
                 const name = document.getElementById('new-seller-name').value;
                 if (!name.trim()) return;
-                push(dbRef, { id: Date.now(), name: name, motos: 0, consorcios: 0, lastSale: null, total: 0 });
+                push(dbRef, { 
+                    id: Date.now(), 
+                    name: name, 
+                    motos: 0, 
+                    consorcios: 0, 
+                    lastSale: null, 
+                    total: 0, 
+                    individualGoal: 10 
+                });
                 document.getElementById('new-seller-name').value = '';
             },
 
@@ -584,6 +685,13 @@
                     lastSale: amount > 0 ? new Date().toISOString() : seller.lastSale
                 };
                 set(ref(db, `sales_data/${firebaseKey}`), { ...seller, ...updates });
+            },
+
+            updateIndGoal(firebaseKey, newGoal) {
+                const seller = localData.find(s => s.firebaseKey === firebaseKey);
+                if (!seller) return;
+                const goal = parseInt(newGoal) || 1;
+                set(ref(db, `sales_data/${firebaseKey}`), { ...seller, individualGoal: goal });
             },
 
             removeSeller(firebaseKey) {
@@ -601,13 +709,23 @@
             renderAdmin(data) {
                 const container = document.getElementById('admin-grid');
                 container.innerHTML = '';
-                // No admin não precisa de animação complexa, renderiza direto
                 const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name)); 
                 sorted.forEach(seller => {
                     const card = document.createElement('div');
                     card.className = 'card';
+                    const currentGoal = seller.individualGoal || 10;
+
+                    // ADMIN CARD COMPACTO: SEM UPLOAD DE FOTO
                     card.innerHTML = `
                         <h2>${seller.name}</h2>
+                        
+                        <div style="width:100%; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:5px; background:#f9fafb; padding:5px; border-radius:6px;">
+                            <label style="font-size:0.75rem; font-weight:bold; color:#1f2937;">Meta:</label>
+                            <input type="number" class="admin-input-goal goal-input" 
+                                   value="${currentGoal}" 
+                                   data-key="${seller.firebaseKey}">
+                        </div>
+
                         <div class="stats-row">
                             <div class="stat-item">
                                 <div class="stat-label">Motos</div>
@@ -626,22 +744,31 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-remove btn btn-small btn-danger" data-key="${seller.firebaseKey}" style="margin-top:auto">Remover</button>
+                        <button class="btn-remove btn btn-small btn-danger" data-key="${seller.firebaseKey}" style="margin-top:auto; width:100%; font-size:0.7rem;">Excluir</button>
                     `;
                     container.appendChild(card);
                 });
-                // Reatacha eventos
+
                 document.querySelectorAll('.btn-up-moto').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'motos', 1));
                 document.querySelectorAll('.btn-down-moto').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'motos', -1));
                 document.querySelectorAll('.btn-up-cons').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'consorcios', 1));
                 document.querySelectorAll('.btn-down-cons').forEach(b => b.onclick = () => this.updateSale(b.dataset.key, 'consorcios', -1));
                 document.querySelectorAll('.btn-remove').forEach(b => b.onclick = () => this.removeSeller(b.dataset.key));
+                
+                document.querySelectorAll('.goal-input').forEach(input => {
+                    input.onchange = (e) => this.updateIndGoal(e.target.dataset.key, e.target.value);
+                });
             },
 
             formatDate(isoString) {
-                if (!isoString) return 'Sem vendas';
+                if (!isoString) return '---';
                 const date = new Date(isoString);
-                return date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                return date.toLocaleString('pt-BR', {
+                    day: '2-digit', 
+                    month: '2-digit', 
+                    hour: '2-digit', 
+                    minute:'2-digit'
+                }).replace(',', '');
             }
         };
 
@@ -650,6 +777,8 @@
         document.getElementById('btn-add-seller').onclick = () => app.addSeller();
         document.getElementById('btn-reset-all').onclick = () => app.resetAll();
         document.getElementById('btn-logout').onclick = () => location.reload();
+        document.getElementById('btn-save-config').onclick = () => app.saveConfig();
+
         document.getElementById('login-form').onsubmit = (e) => {
             e.preventDefault();
             if (document.getElementById('email').value === 'admin@recreiomotos.com' && document.getElementById('password').value === '123456') {
